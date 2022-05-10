@@ -8,6 +8,7 @@ api.js
 *.iml
 .vscode
 .idea
+.settings
 
 # OS temp files
 .DS_Store
@@ -19,7 +20,9 @@ api.js
 .gradle
 
 # Java .class files
+bin
 classes
+**/*.class
 
 # Test files
 test-files/tmp/*

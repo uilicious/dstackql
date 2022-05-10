@@ -79,7 +79,7 @@ dependencies {
 
 	// This dependencies is used internally, and not exposed to consumers on their own compile classpath.
 	//-------------------------------------------------------------------------------------------------------------------
-	// implementation 'com.google.guava:guava:23.0'
+	implementation 'info.picocli:picocli:4.0.4'
 
 	// Testing dependencies
 	//-------------------------------------------------------------------------------------------------------------------
@@ -108,17 +108,24 @@ jar {
 	manifest {
 		attributes(
 			'Implementation-Title': project.name,
-			'Implementation-Version': project.version
+			'Implementation-Version': project.version,
+
+			// The main class
+			"Main-Class": "uilicious.dstackql.MainCLI"
 		)
 	}
 }
+
+//
+// Namespace relocating config
+//
+def shadowJarRelocateNamespace = "uilicious.shade"
 
 //
 // Shadow jar - dependencies are shaded
 //
 // `gradle shadowJar`
 //
-def shadowJarRelocateNamespace = "uilicious.shade"
 shadowJar {
 	// Archive name overwrite
 	archiveName = project.name+"-"+project.version+"-shade"+".jar"
@@ -129,10 +136,11 @@ shadowJar {
 		inheritFrom project.tasks.jar.manifest
 	}
 
-	// Shade depencies under "picoded.shade"
+	// Shade depencies under "shadowJarRelocateNamespace"
 	relocate "org", shadowJarRelocateNamespace+".org"
 	relocate "com", shadowJarRelocateNamespace+".com"
 	relocate "okhttp3", shadowJarRelocateNamespace+".okhttp3"
+	relocate "picocli", shadowJarRelocateNamespace+".picocli"
 }
 
 //
@@ -180,14 +188,15 @@ task fatJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 	relocate "org", "org"
 	relocate "com", "com"
 	relocate "okhttp3", "okhttp3"
+	relocate "picocli", "picocli"
 }
 
 // Define the equivalent of buildAll
 // for the build process done by "gradle build"
 artifacts {
-	archives fatJar
-	archives shadowJar
 	archives jar
+	archives fatJar
+	// archives shadowJar
 }
 
 //----------------------------------------------------------------
@@ -270,11 +279,12 @@ jacocoTestReport {
 //----------------------------------------------------------------
 
 task buildAll {
-	description = "Build all 3 jars: jar, shadowJar, fatJar"
+	description = "Build both the jar and the, fatJar - exclude the shadowJar"
 
 	dependsOn jar
-	dependsOn shadowJar
 	dependsOn fatJar
+
+	// dependsOn shadowJar
 }
 
 task testAndBuildAll {
