@@ -16,7 +16,6 @@ api.js
 !.classpath
 
 # Gradle files 
-gradle
 .gradle
 
 # Java .class files
