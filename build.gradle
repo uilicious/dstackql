@@ -37,7 +37,7 @@ repositories {
 //----------------------------------------------------------------
 
 // The Project version
-version = '4.1.0'
+version = '0.1.0'
 
 // Setup java compilation version
 sourceCompatibility = 1.8
@@ -52,7 +52,7 @@ targetCompatibility = 1.8
 // JavaCommons core compilation
 task buildJavaCommons(type: GradleBuild) {
 	buildFile = './JavaCommons-gradle/build.gradle'
-	tasks = ['fatJar'] // 'jar',
+	tasks = ['jar','fatJar'] // 
 }
 
 // Dependency linkage of core project build
@@ -60,242 +60,226 @@ compileJava {
 	dependsOn buildJavaCommons
 }
 
-// //----------------------------------------------------------------
-// //
-// //  Project dependencies
-// //
-// //----------------------------------------------------------------
+//----------------------------------------------------------------
+//
+//  Project dependencies
+//
+//----------------------------------------------------------------
 
-// // Dependencies used in the build
-// dependencies {
+// Dependencies used in the build
+dependencies {
 	
-// 	// JavaCommons dependencies
-// 	//-------------------------------------------------------------------------------------------------------------------
-// 	compile fileTree(dir: './JavaCommons-core/build/libs', include: ['*-nodep.jar']) 
-// 	compile fileTree(dir: './JavaCommons-dstack/build/libs', include: ['*-nodep.jar']) 
-// 	compile fileTree(dir: './JavaCommons-servlet/build/libs', include: ['*-nodep.jar']) 
-// 	compile fileTree(dir: './JavaCommons-module/build/libs', include: ['*-nodep.jar']) 
+	// JavaCommons dependencies
+	//-------------------------------------------------------------------------------------------------------------------
+	compile fileTree(dir: './JavaCommons-gradle/build/libs', include: ['*-nodep.jar']) 
 
-// 	// These dependencies are exported as part of the "all" package
-// 	//-------------------------------------------------------------------------------------------------------------------
-// 	api fileTree(dir: './JavaCommons-core/build/libs', include: ['*-all.jar']) 
-// 	api fileTree(dir: './JavaCommons-dstack/build/libs', include: ['*-all.jar']) 
-// 	api fileTree(dir: './JavaCommons-servlet/build/libs', include: ['*-all.jar']) 
-// 	api fileTree(dir: './JavaCommons-module/build/libs', include: ['*-all.jar']) 
+	// These dependencies are exported as part of the "all" package
+	//-------------------------------------------------------------------------------------------------------------------
+	api fileTree(dir: './JavaCommons-gradle/build/libs', include: ['*-all.jar']) 
 
-// 	// This dependencies is used internally, and not exposed to consumers on their own compile classpath.
-// 	//-------------------------------------------------------------------------------------------------------------------
-// 	// implementation 'com.google.guava:guava:23.0'
+	// This dependencies is used internally, and not exposed to consumers on their own compile classpath.
+	//-------------------------------------------------------------------------------------------------------------------
+	// implementation 'com.google.guava:guava:23.0'
 
-// 	// Testing dependencies
-// 	//-------------------------------------------------------------------------------------------------------------------
-// 	testImplementation 'junit:junit:4.12'
-// 	testImplementation 'com.carrotsearch:junit-benchmarks:0.7.2'
+	// Testing dependencies
+	//-------------------------------------------------------------------------------------------------------------------
+	testImplementation 'junit:junit:4.12'
+	testImplementation 'com.carrotsearch:junit-benchmarks:0.7.2'
 
-// }
+}
 
-// //----------------------------------------------------------------
-// //
-// //  Jar build steps
-// //
-// //----------------------------------------------------------------
+//----------------------------------------------------------------
+//
+//  Jar build steps
+//
+//----------------------------------------------------------------
 
-// //
-// // Base JAR build settings
-// //
-// // `gradle jar`
-// //
-// jar {
-// 	// Archive name overwrite
-// 	archiveName = project.name+"-"+project.version+"-nodep"+".jar"
-// 	description = "Build the "+archiveName+" with no dependencies"
+//
+// Base JAR build settings
+//
+// `gradle jar`
+//
+jar {
+	// Archive name overwrite
+	archiveName = project.name+"-"+project.version+"-nodep"+".jar"
+	description = "Build the "+archiveName+" with no dependencies"
 
-// 	// Inherit the main jar manifest
-// 	manifest {
-// 		attributes(
-// 			'Implementation-Title': project.name,
-// 			'Implementation-Version': project.version
-// 		)
-// 	}
+	// Inherit the main jar manifest
+	manifest {
+		attributes(
+			'Implementation-Title': project.name,
+			'Implementation-Version': project.version
+		)
+	}
+}
 
-// 	// Include the compile class files
-// 	from("./JavaCommons-core/build/classes/java/main") {
-// 		include "**/*"
-// 	}
-// 	from("./JavaCommons-dstack/build/classes/java/main") {
-// 		include "**/*"
-// 	}
-// 	from("./JavaCommons-servlet/build/classes/java/main") {
-// 		include "**/*"
-// 	}
-// 	from("./JavaCommons-module/build/classes/java/main") {
-// 		include "**/*"
-// 	}
-// }
+//
+// Shadow jar - dependencies are shaded
+//
+// `gradle shadowJar`
+//
+def shadowJarRelocateNamespace = "uilicious.shade"
+shadowJar {
+	// Archive name overwrite
+	archiveName = project.name+"-"+project.version+"-shade"+".jar"
+	description = "Build the "+archiveName+" with all dependencies shaded"
 
-// //
-// // Shadow jar - dependencies are shaded
-// //
-// // `gradle shadowJar`
-// //
-// shadowJar {
-// 	// Archive name overwrite
-// 	archiveName = project.name+"-"+project.version+"-shade"+".jar"
-// 	description = "Build the "+archiveName+" with all dependencies shaded"
+	// Inherit the main jar manifest
+	manifest {
+		inheritFrom project.tasks.jar.manifest
+	}
 
-// 	// Inherit the main jar manifest
-// 	manifest {
-// 		inheritFrom project.tasks.jar.manifest
-// 	}
+	// Shade depencies under "picoded.shade"
+	relocate "org", shadowJarRelocateNamespace+".org"
+	relocate "com", shadowJarRelocateNamespace+".com"
+	relocate "okhttp3", shadowJarRelocateNamespace+".okhttp3"
+}
 
-// 	// Shade depencies under "picoded.shade"
-// 	relocate "picoded", "picoded"
-// 	relocate "org", "picoded.shade.org"
-// 	relocate "com", "picoded.shade.com"
-// 	relocate "oracle", "picoded.shade.oracle"
-// }
+//
+// Fat jar - dependencies are included, and not shaded
+//
+// `gradle shadowJar`
+//
+task fatJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	// Archive name overwrite
+	archiveName = project.name+"-"+project.version+"-all"+".jar"
+	description = "Build the "+archiveName+" with all dependencies"
 
-// //
-// // Fat jar - dependencies are included, and not shaded
-// //
-// // `gradle shadowJar`
-// //
-// task fatJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-// 	// Archive name overwrite
-// 	archiveName = project.name+"-"+project.version+"-all"+".jar"
-// 	description = "Build the "+archiveName+" with all dependencies"
+	//
+	// Note that the following is extended heavily from the default setup of shadowJar task
+	// See : https://github.com/johnrengelman/shadow/blob/7ef6fc2699627f172b05a3bd3523201d63bb588f/src/main/groovy/com/github/jengelman/gradle/plugins/shadow/ShadowJavaPlugin.groovy#L38-L63
+	//
 
-// 	//
-// 	// Note that the following is extended heavily from the default setup of shadowJar task
-// 	// See : https://github.com/johnrengelman/shadow/blob/7ef6fc2699627f172b05a3bd3523201d63bb588f/src/main/groovy/com/github/jengelman/gradle/plugins/shadow/ShadowJavaPlugin.groovy#L38-L63
-// 	//
+	// NOTE : I dunno what this is - but it was setup in the default config
+	conventionMapping.with {
+		map('classifier') {
+			'all'
+		}
+	}
+	// Build from the main output
+	from sourceSets.main.output
+	// Load default configurations
+	configurations = [project.configurations.findByName('runtimeClasspath') ? project.configurations.runtimeClasspath : project.configurations.runtime]
+	// Inherit the main jar manifest
+	manifest {
+		inheritFrom project.tasks.jar.manifest
+	}
+	// Project dependencies libraries
+	doFirst {
+		def files = project.configurations.findByName(com.github.jengelman.gradle.plugins.shadow.ShadowBasePlugin.CONFIGURATION_NAME).files
+		if (files) {
+			def libs = [project.tasks.jar.manifest.attributes.get('Class-Path')]
+			libs.addAll files.collect { "${it.name}" }
+			manifest.attributes 'Class-Path': libs.findAll { it }.join(' ')
+		}
+	}
+	// Exclude signed jar signatures?
+	exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 
-// 	// NOTE : I dunno what this is - but it was setup in the default config
-// 	conventionMapping.with {
-// 		map('classifier') {
-// 			'all'
-// 		}
-// 	}
-// 	// Build from the main output
-// 	from sourceSets.main.output
-// 	// Load default configurations
-// 	configurations = [project.configurations.findByName('runtimeClasspath') ? project.configurations.runtimeClasspath : project.configurations.runtime]
-// 	// Inherit the main jar manifest
-// 	manifest {
-// 		inheritFrom project.tasks.jar.manifest
-// 	}
-// 	// Project dependencies libraries
-// 	doFirst {
-// 		def files = project.configurations.findByName(com.github.jengelman.gradle.plugins.shadow.ShadowBasePlugin.CONFIGURATION_NAME).files
-// 		if (files) {
-// 			def libs = [project.tasks.jar.manifest.attributes.get('Class-Path')]
-// 			libs.addAll files.collect { "${it.name}" }
-// 			manifest.attributes 'Class-Path': libs.findAll { it }.join(' ')
-// 		}
-// 	}
-// 	// Exclude signed jar signatures?
-// 	exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+	// Disable relocation
+	relocate "org", "org"
+	relocate "com", "com"
+	relocate "okhttp3", "okhttp3"
+}
 
-// 	// Disable relocation
-// 	relocate "picoded", "picoded"
-// 	relocate "org", "org"
-// 	relocate "com", "com"
-// 	relocate "oracle", "oracle"
-// }
+// Define the equivalent of buildAll
+// for the build process done by "gradle build"
+artifacts {
+	archives fatJar
+	archives shadowJar
+	archives jar
+}
 
-// // Define the equivalent of buildAll
-// // for the build process done by "gradle build"
-// artifacts {
-// 	archives fatJar
-// 	archives shadowJar
-// 	archives jar
-// }
+//----------------------------------------------------------------
+//
+//  Concurent test threads
+//
+//----------------------------------------------------------------
 
-// //----------------------------------------------------------------
-// //
-// //  Concurent test threads
-// //
-// //----------------------------------------------------------------
-
-// test {
-// 	// Exclude performance related test
-// 	exclude "**/perf/*.java"
-// 	exclude "**/*_perf*"
-
-// 	// Include mssql, mysql, and oracle test only if they are configured respectively
-// 	//
-// 	// You can enable any of them by running the `gradle test` command with their `-P`
-// 	// option, for example `gradle test -Ptest_mssql`
-// 	if(!project.hasProperty("test_mssql")) {
-// 		exclude "**/*Mssql*"
-// 	}
-// 	if(!project.hasProperty("test_oracle")) {
-// 		exclude "**/*Oracle*"
-// 	}
-// 	if(!project.hasProperty("test_mysql")) {
-// 		exclude "**/*Mysql*"
-// 	}
-// 	if(!project.hasProperty("test_postgres")) {
-// 		exclude "**/*Postgres*"
-// 	}
-// 	if(!project.hasProperty("test_sqlite")) {
-// 		exclude "**/*Sqlite*"
-// 	}
-
-// 	// Setup test to run on parllel threads = to number of processors by default
-// 	if (project.hasProperty('maxParallelForks')) {
-// 		maxParallelForks = project.maxParallelForks as int
-// 	} else {
-// 		// As our test tends to be io-blocked rather then cpu
-// 		// we will run more tests in parallels
-// 		maxParallelForks = (Runtime.runtime.availableProcessors() * 2) as int
-// 	}
+test {
+	// Setup test to run on parllel threads = to number of processors by default
+	if (project.hasProperty('maxParallelForks')) {
+		maxParallelForks = project.maxParallelForks as int
+	} else {
+		// As our test tends to be io-blocked rather then cpu
+		// we will run more tests in parallels
+		maxParallelForks = (Runtime.runtime.availableProcessors() * 2) as int
+	}
 	
-// 	// Set up the number of tests per fork
-// 	if (project.hasProperty('forkEvery')) {
-// 		forkEvery = project.forkEvery as int
-// 	}
-// }
+	// Set up the number of tests per fork
+	if (project.hasProperty('forkEvery')) {
+		forkEvery = project.forkEvery as int
+	}
+}
 
-// //----------------------------------------------------------------
-// //
-// //  Jacoco test coverage
-// //
-// //----------------------------------------------------------------
+//----------------------------------------------------------------
+//
+//  Custom src-beautify / prettifier
+//  and compile aliases (with auto srcBeautify)
+//
+//----------------------------------------------------------------
 
-// jacoco {
-// 	toolVersion = "0.8.0"
-// }
+// srcBeautify, with input file mapping (to skip srcBeautify steps if needed)
+def srcBeautify_inputFiles = project.fileTree(dir: "src", include: "**/*.java")
+def srcBeautify_outputDir = "${project.buildDir}/build-util/java-fromatter/output/"
+task srcBeautify(type:Exec) {
+	// Input file tracking, to skip command if its not needed
+	inputs.files(srcBeautify_inputFiles)
+	outputs.dir(srcBeautify_outputDir)
 
-// jacocoTestReport {
-// 	// Build the report
-// 	reports {
-// 		xml.enabled true
-// 		csv.enabled true
+	// The build formatter command
+	workingDir '.'
+	commandLine './build-util/java-formatter/parallel_format.sh','./src'
+}
+task prettify(dependsOn: srcBeautify) 
 
-// 		// Report format compatible with codeconv.io
-// 		xml.destination "${buildDir}/reports/jacoco/report.xml"
-// 		csv.destination "${buildDir}/reports/jacoco/report.csv"
-// 	}
-// }
+// Doing compile alias for java
+task src(dependsOn: compileJava) 
+task source(dependsOn: src) 
+task compile(dependsOn: src) 
 
-// //----------------------------------------------------------------
-// //
-// //  Quick multibuild steps
-// //
-// //----------------------------------------------------------------
+// Forcing srcBeautify on src step
+src.dependsOn srcBeautify
 
-// task buildAll {
-// 	description = "Build all 3 jars: jar, shadowJar, fatJar"
+//----------------------------------------------------------------
+//
+//  Jacoco test coverage
+//
+//----------------------------------------------------------------
 
-// 	dependsOn jar
-// 	dependsOn shadowJar
-// 	dependsOn fatJar
-// }
+jacoco {
+	toolVersion = "0.8.0"
+}
 
-// task testAndBuildAll {
-// 	description = "Performs the full test suite, then build all 3 jars: jar, shadowJar, fatJar"
+jacocoTestReport {
+	// Build the report
+	reports {
+		xml.enabled true
+		csv.enabled true
 
-// 	dependsOn jacocoTestReport
-// 	dependsOn buildAll
-// }
+		// Report format compatible with codeconv.io
+		xml.destination "${buildDir}/reports/jacoco/report.xml"
+		csv.destination "${buildDir}/reports/jacoco/report.csv"
+	}
+}
+
+//----------------------------------------------------------------
+//
+//  Quick multibuild steps
+//
+//----------------------------------------------------------------
+
+task buildAll {
+	description = "Build all 3 jars: jar, shadowJar, fatJar"
+
+	dependsOn jar
+	dependsOn shadowJar
+	dependsOn fatJar
+}
+
+task testAndBuildAll {
+	description = "Performs the full test suite, then build all 3 jars: jar, shadowJar, fatJar"
+
+	dependsOn jacocoTestReport
+	dependsOn buildAll
+}
