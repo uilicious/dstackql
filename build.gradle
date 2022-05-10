@@ -66,16 +66,29 @@ compileJava {
 //
 //----------------------------------------------------------------
 
+// JavaCommons-gradle directory (for java commons dependencies)
+def jcGradleDirectory = './JavaCommons-gradle'
+
 // Dependencies used in the build
 dependencies {
 	
 	// JavaCommons dependencies
+	//
+	// We intentionally limit this scope, to reduce the overall fatJar size, 
+	// and speed up overall build performance, during src code rebuilds (with no dep changes)
 	//-------------------------------------------------------------------------------------------------------------------
-	compile fileTree(dir: './JavaCommons-gradle/build/libs', include: ['*-nodep.jar']) 
+	
+	compile fileTree(dir: "${jcGradleDirectory}/JavaCommons-core/build/libs",   include: ['*-nodep.jar']) 
+	compile fileTree(dir: "${jcGradleDirectory}/JavaCommons-dstack/build/libs", include: ['*-nodep.jar']) 
+	compile fileTree(dir: "${jcGradleDirectory}/JavaCommons-module/build/libs", include: ['*-nodep.jar']) 
+
+	api     fileTree(dir: "${jcGradleDirectory}/JavaCommons-core/build/libs",   include: ['*-all.jar']) 
+	api     fileTree(dir: "${jcGradleDirectory}/JavaCommons-dstack/build/libs", include: ['*-all.jar']) 
+	api     fileTree(dir: "${jcGradleDirectory}/JavaCommons-module/build/libs", include: ['*-all.jar']) 
 
 	// These dependencies are exported as part of the "all" package
 	//-------------------------------------------------------------------------------------------------------------------
-	api fileTree(dir: './JavaCommons-gradle/build/libs', include: ['*-all.jar']) 
+	// api fileTree(dir: "${jcGradleDirectory}/JavaCommons-core/build/libs", include: ['*-all.jar']) 
 
 	// This dependencies is used internally, and not exposed to consumers on their own compile classpath.
 	//-------------------------------------------------------------------------------------------------------------------
