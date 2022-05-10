@@ -40,3 +40,6 @@ What is not the scope of this project
 
 - [ ] Implement the core DStack initialization
 - [ ] Implement the background worker logic
+
+- [ ] Jar build and run CLI
+- [ ] Docker build and run process
