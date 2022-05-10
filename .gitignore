@@ -35,6 +35,9 @@ storage/*
 data/*
 !data/README.md
 
+# Build dir
+build
+
 # Node modules
 */node_modules
 
