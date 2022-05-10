@@ -1,0 +1,3 @@
+[submodule "JavaCommons-gradle"]
+	path = JavaCommons-gradle
+	url = https://github.com/picoded/JavaCommons-gradle.git

@@ -1,0 +1,46 @@
+# Generated Files (standard) #
+##############################
+api.js
+
+#############################
+
+# IDE preferences
+*.iml
+.vscode
+.idea
+
+# OS temp files
+.DS_Store
+
+# INCLUDE java classpath (vscode) 
+!.classpath
+
+# Gradle files 
+gradle
+.gradle
+
+# Java .class files
+classes
+
+# Test files
+test-files/tmp/*
+test-files/junit-reports/*
+test-output
+test-report
+
+# Local storage for project workspace files
+storage/*
+!storage/*/_anchor.txt
+
+# Local data files for sqlite
+data/*
+!data/README.md
+
+# Node modules
+*/node_modules
+
+# Local config
+config/**/*.local.json
+
+# Version.txt
+version.txt
