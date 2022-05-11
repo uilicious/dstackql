@@ -1,0 +1,36 @@
+{
+	//
+	// ## Providers
+	//
+	// This represent the various data layers providers used in the system.
+    //
+    // For examples on how to configure the provider, see the `dstack.full_example.jsonc`
+    //
+	"provider" : [
+        // Local in memory storage on the current instance
+		{
+			"type" : "StructSimple",
+			"name" : "local_structsimple"
+		}
+	],
+
+	//
+	// ## Namespace
+	//
+	// Declaration of namespace relation to the providers
+	//
+	// Normally a caching layer will be placed first, followed by
+	// the actual implmentation layer.
+	//
+	// The last layer will normally be the "single source of truth",
+	// for handling data accuracy resolution, and queries. (Normally JSql)
+	//
+	"namespace" : [
+		{
+			"regex" : ".*",
+			"providers" : [
+				"local_structsimple"
+			]
+		}
+	]
+}
