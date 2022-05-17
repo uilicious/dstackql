@@ -43,11 +43,13 @@ class MainCLI implements Callable<Integer> {
 		// Lead the multi stack
 		MultiStackLoader multiStack = new MultiStackLoader( config.fetchGenericConvertStringMap("dstack") );
 
-
 		// @TODO load the server
+
+		// Trigger the preloader
+		multiStack.runMultiThreadedPreloader(6);
 		
 		// Post server sleep
-		System.out.println("## Post setup (sleeping)");
+		System.out.println("## Post setup cleanup (sleeping)");
 		Thread.sleep(10000);
 
 		// Application exit
