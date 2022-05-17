@@ -1,4 +1,7 @@
 {
+	// ## Flag to enable / disable the dstack provider
+	"enable": true,
+
 	//
 	// ## Providers
 	//

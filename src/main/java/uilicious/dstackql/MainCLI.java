@@ -4,27 +4,53 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import picoded.core.file.ConfigFileSet;
+import uilicious.dstackql.stack.MultiStackLoader;
 
 import java.io.File;
-import java.math.BigInteger;
-import java.nio.file.Files;
-import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 
-@Command(name = "checksum", mixinStandardHelpOptions = true, version = "checksum 4.0", description = "Prints the checksum (SHA-256 by default) of a file to STDOUT.")
+@Command(name = "DStackQL", mixinStandardHelpOptions = true, version = "0.1.1", description = "DStackQL Server Program")
 class MainCLI implements Callable<Integer> {
 	
-	@Parameters(index = "0", description = "The file whose checksum to calculate.")
-	private File file;
+	// Example of arguments format
+	// kept here for future refrence
+	// See: https://picocli.info/
+	//-----------------------------------------------------
+	// @Parameters(index = "0", description = "The file whose checksum to calculate.")
+	// private File file;	
+	// @Option(names = { "-a", "--algorithm" }, description = "MD5, SHA-1, SHA-256, ...")
+	// private String algorithm = "SHA-256";
 	
-	@Option(names = { "-a", "--algorithm" }, description = "MD5, SHA-1, SHA-256, ...")
-	private String algorithm = "SHA-256";
+	@Option(names = { "-c", "--config" }, description = "Config directory to load settings from")
+	private File configDir = new File("./config");
 	
 	@Override
-	public Integer call() throws Exception { // your business logic goes here...
-		byte[] fileContents = Files.readAllBytes(file.toPath());
-		byte[] digest = MessageDigest.getInstance(algorithm).digest(fileContents);
-		System.out.printf("%0" + (digest.length * 2) + "x%n", new BigInteger(1, digest));
+	public Integer call() throws Exception {
+		
+		// Check if the config directory is valid
+		if (!configDir.isDirectory()) {
+			throw new RuntimeException("Missing valid config directory : "
+				+ configDir.getCanonicalPath());
+		}
+		
+		// The starting console log
+		System.out.println("## Starting DStackQL ...");
+
+		// Lets load the config accordingly
+		ConfigFileSet config = new ConfigFileSet( configDir );
+
+		// Lead the multi stack
+		MultiStackLoader multiStack = new MultiStackLoader( config.fetchGenericConvertStringMap("dstack") );
+
+
+		// @TODO load the server
+		
+		// Post server sleep
+		System.out.println("## Post setup (sleeping)");
+		Thread.sleep(10000);
+
+		// Application exit
 		return 0;
 	}
 	
