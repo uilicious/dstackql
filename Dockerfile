@@ -5,7 +5,7 @@
 #
 #####################################################################################################################
 #####################################################################################################################
-FROM alpine:3.15 AS alpine_withJDK
+FROM alpine:3.15 AS alpine_with_jdk
 
 # Install the openjdk8
 RUN apk add openjdk8
@@ -21,7 +21,7 @@ WORKDIR /application/
 #
 #####################################################################################################################
 #####################################################################################################################
-FROM alpine_withJDK AS application_build
+FROM alpine_with_jdk AS application_build
 
 # Copy the app code and build the JAR
 COPY ./ /application/
@@ -34,7 +34,7 @@ RUN ./gradlew fatJar
 #
 #####################################################################################################################
 #####################################################################################################################
-FROM alpine_withJDK AS container_build
+FROM alpine_with_jdk AS container_build
 
 # Copy over the configs
 COPY ./config/sys                         /application/config/sys/
