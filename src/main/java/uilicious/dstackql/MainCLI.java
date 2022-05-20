@@ -47,7 +47,7 @@ class MainCLI implements Callable<Integer> {
 
 		// Trigger the preloader (if enabled)
 		if( config.fetchBoolean("sys.preloader.enable", true) == true ) {
-			multiStack.runMultiThreadedPreloader( config.fetchInt("sys.preloader.threads", 6) );
+			multiStack.runMultiThreadedPreloader_andWait( config.fetchInt("sys.preloader.threads", 6) );
 		}
 		
 		// Post server sleep

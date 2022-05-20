@@ -59,8 +59,19 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 	 ** 
 	 ** @param threadCount maximum number of concurrent preloaders
 	 */
-	public void runMultiThreadedPreloader(int threadCount) {
-		runMultiThreadedPreloader( this.keySet(), threadCount );
+	public void runMultiThreadedPreloader_andWait(int threadCount) {
+		ExecutorService pool = runMultiThreadedPreloader( this.keySet(), threadCount );
+
+		// Lets wait for pool for completion
+		pool.shutdown();
+		try {
+			if( pool.awaitTermination(30L, TimeUnit.DAYS) == false ) {
+				pool.shutdownNow();
+				throw new RuntimeException("## [Preloader] Terminating due to 30 days timeout !");
+			}
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -69,7 +80,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 	 ** @param stackNames  stack to scan against
 	 ** @param threadCount maximum number of concurrent preloaders
 	 */
-	public void runMultiThreadedPreloader(Collection<String> stackNames, int threadCount) {
+	public ExecutorService runMultiThreadedPreloader(Collection<String> stackNames, int threadCount) {
 
 		// Event logging
 		System.out.println("## [Preloader] Starting multi-threaded preloader with thread count : "+threadCount);
@@ -95,20 +106,12 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 			schedulePreloaderThreads(stackName, stackObj, pool, preloaderConfig, "DataObjectMap" );
 		}
 
-		// Lets wait for pool for completion
-		pool.shutdown();
-		try {
-			if( pool.awaitTermination(30L, TimeUnit.DAYS) == false ) {
-				pool.shutdownNow();
-				throw new RuntimeException("## [Preloader] Terminating due to 30 days timeout !");
-			}
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
+		// Return the pool after everything is scheduled
+		return pool;
 	}
 
 	// Helper function for preloading individual threads
-	protected static void schedulePreloaderThreads(String stackName, DStack stack, ExecutorService pool, GenericConvertMap<String,Object> preloaderConfig, String structType ) {
+	protected void schedulePreloaderThreads(String stackName, DStack stack, ExecutorService pool, GenericConvertMap<String,Object> preloaderConfig, String structType ) {
 		// Get the preloader config map
 		GenericConvertMap<String,Object> structConfig = preloaderConfig.getGenericConvertStringMap(structType, "{}");
 		List<String> structNames = new ArrayList<String>(structConfig.keySet());
@@ -116,22 +119,36 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 
 		// Lets iterate the struct list, in random order, and schedule them
 		for(String structName : structNames) {
-			schedulePreloaderThreads(stackName, stack, pool, structType, structName);
+			// target stack to sync to (if configured)
+			DStack targetStack = null;
+			String targetStructName = null;
+
+			// Get the map config (if applicable)
+			GenericConvertMap<String,Object> structPreloadConfig = structConfig.fetchGenericConvertStringMap(structName, null);
+			if( structPreloadConfig != null ) {
+				String targetStackName = structPreloadConfig.getString("targetStack", null);
+				if( targetStackName != null ) {
+					targetStack = this.get(targetStackName);
+					if( targetStack == null ) {
+						throw new RuntimeException("Unable to perform preloader sync to targetStack (does not exists): "+targetStackName);
+					}
+					targetStructName = structPreloadConfig.getString("targetName", structName);
+				}
+			}
+			
+			// The runnable task to setup
+			Runnable runnableTask = buildTheRunnableTask(stackName, stack, structType, structName, targetStack, targetStructName);
+			if( runnableTask == null ) {
+				return;
+			}
+
+			// Schedule the task
+			pool.submit( runnableTask );
 		}
 	}
 
-	// Helper function for preloading individual threads
-	protected static void schedulePreloaderThreads(String stackName, DStack stack, ExecutorService pool, String structType, String structName) {
-		// The runnable task to setup
-		Runnable runnableTask = buildTheRunnableTask(stackName, stack, structType, structName);
-		if( runnableTask == null ) {
-			return;
-		}
-		// Schedule the task
-		pool.submit( runnableTask );
-	}
 	// Build the runnable task, which is then scheduled accordingly
-	protected static Runnable buildTheRunnableTask(String stackName, DStack stack, String structType, String structName) {
+	protected static Runnable buildTheRunnableTask(String stackName, DStack stack, String structType, String structName, DStack targetStack, String targetStructName) {
 		if( structType.equalsIgnoreCase("DataObjectMap") ) {
 			return () -> {
 				try {
@@ -146,8 +163,21 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					DataObject obj = dom.looselyIterateObject(null);
 					while( obj != null ) {
 						try {
-							// Lets just load the keyset, to help ensure data is laoded
-							obj.keySet();
+							if(targetStack != null) {
+								// Lets sync it to a target
+								DataObjectMap targetDom = targetStack.getDataObjectMap(targetStructName);
+
+								// Get the unchecked data object, to sync data to
+								DataObject targetObject = targetDom.get(obj._oid(), true);
+								targetObject.putAll(obj);
+
+								// And sync it
+								targetObject.saveDelta();
+							} else {
+								// Lets load the keyset, to help ensure data is loaded
+								// if target syncing is not required
+								obj.keySet();
+							}
 							
 							// lets go to the next object
 							obj = dom.looselyIterateObject(obj);
@@ -164,7 +194,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					}
 
 					// Finish the output
-					System.out.println("[Preloader-"+structType+"] "+stackName+"."+structName+" : Finished Preloading !!!");
+					System.out.println("[Preloader-"+structType+"] "+stackName+"."+structName+" : Finished Preloading ("+dom.size()+") !!!");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

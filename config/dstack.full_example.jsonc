@@ -87,7 +87,8 @@
 		// 		// User and password settings
 		// 		"user": "db_user",
 		// 		"pass": "db_user",
-		// 		// mongodb host setting
+		// 		// mongodb database name and host setting
+		// 		"name": "mongodb",
 		// 		"host": "localhost",
 		// 		// mongodb port setting
 		// 		// this is ignored for "monogodb+srv"
