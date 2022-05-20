@@ -110,7 +110,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 	// Helper function for preloading individual threads
 	protected static void schedulePreloaderThreads(String stackName, DStack stack, ExecutorService pool, GenericConvertMap<String,Object> preloaderConfig, String structType ) {
 		// Get the preloader config map
-		GenericConvertMap<String,Object> structConfig = preloaderConfig.getGenericConvertStringMap(structType);
+		GenericConvertMap<String,Object> structConfig = preloaderConfig.getGenericConvertStringMap(structType, "{}");
 		List<String> structNames = new ArrayList<String>(structConfig.keySet());
 		Collections.shuffle( structNames );
 

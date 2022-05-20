@@ -52,7 +52,7 @@ class MainCLI implements Callable<Integer> {
 		
 		// Post server sleep
 		System.out.println("## Post setup cleanup (sleeping)");
-		Thread.sleep(10000);
+		Thread.sleep(24 * 60 * 60 * 1000);
 
 		// Application exit
 		return 0;
