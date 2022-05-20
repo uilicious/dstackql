@@ -6,11 +6,11 @@
 	// ## Providers
 	//
 	// This represent the various data layers providers used in the system.
-    //
-    // For examples on how to configure the provider, see the `dstack.full_example.jsonc`
-    //
+	//
+	// For examples on how to configure the provider, see the `dstack.full_example.jsonc`
+	//
 	"provider" : [
-        // Local in memory storage on the current instance
+		// Local in memory storage on the current instance
 		{
 			"type" : "StructSimple",
 			"name" : "local_structsimple"

@@ -3,82 +3,82 @@
 	// ## Providers
 	//
 	// This represent the various data layers providers used in the system.
-    //
-    // The following config example covers all the various possible connection types
-    // all names, and config examples can be adjusted for the specific use case.
-    //
+	//
+	// The following config example covers all the various possible connection types
+	// all names, and config examples can be adjusted for the specific use case.
+	//
 	"provider" : [
 		
 		//================================================================================
 		//
 		// ### Cacheing Layer Connectors
-        //
-        // Typically used to improve read performance of frequently accessed data
+		//
+		// Typically used to improve read performance of frequently accessed data
 		//
 		//================================================================================
 
-        //------------------------------------------------------------------
+		//------------------------------------------------------------------
 		// **StructCache**
 		//
-        // Local in memory caching on the current instance.
+		// Local in memory caching on the current instance.
 		//
 		// Supports: 
 		// - DataObjectMap (storage mode only)
-        //------------------------------------------------------------------
+		//------------------------------------------------------------------
 		{
 			"name" : "local_structcache",
 			"type" : "StructCache",
 
-            // Default config values
-            // ----
+			// Default config values
+			// ----
 
-            // // Number of objects to store,
-            // //
-            // // if each object is ~6 KB including overheads
-            // // the default 100k objects, will use up ~ 600 MB ram space
-            // "capacity": 100000
+			// // Number of objects to store,
+			// //
+			// // if each object is ~6 KB including overheads
+			// // the default 100k objects, will use up ~ 600 MB ram space
+			// "capacity": 100000
 		},
 
-        //------------------------------------------------------------------
+		//------------------------------------------------------------------
 		// **StructCache**
 		//
-        // Remote hazelcast cluster, with data structures configured in caching mode.
+		// Remote hazelcast cluster, with data structures configured in caching mode.
 		// This requires the usage of the custom "hazelcast" container with JC addon code.
 		//
 		// Supports: 
 		// - DataObjectMap (storage mode only)
 		// - KeyValueMap
 		// - KeyLongMap
-        //------------------------------------------------------------------
-        {
-            "name" : "remote_hazelcast_cache",
-            "type" : "HazelcastCache",
+		//------------------------------------------------------------------
+		{
+			"name" : "remote_hazelcast_cache",
+			"type" : "HazelcastCache",
 
-            "hazelcast": {
+			"hazelcast": {
 
-                // Connect as a client
-                "mode" : "client",
+				// Connect as a client
+				"mode" : "client",
 
 				// Example conneciton details
-                "port" : 5701,
-                "groupName": "hc-cache",
-                "memberTcpList" : [
-                    "hc-cache.hazelcast.svc.cluster.local"
-                ]
-            }
-        },
+				"port" : 5701,
+				"groupName": "hc-cache",
+				"memberTcpList" : [
+					"hc-cache.hazelcast.svc.cluster.local"
+				]
+			}
+		},
 		//--------------------------------------------------------------------------------
 		//
 		// SQL Layer examples
 		//
 		//--------------------------------------------------------------------------------
-        
-        // {
-        //     "name": "project_workspace",
-        //     "type": "filelayered",
-        //     "storage": "/storage/apirunner/storage",
-        //     "appendNameSpace": false
-        // },
+		
+		// {
+		//     "name": "project_workspace",
+		//     "type": "filelayered",
+		//     "storage": "/storage/apirunner/storage",
+		//     "appendNameSpace": false
+		// },
 		// {
 		// 	// Data stack type
 		// 	"type" : "jsql",
@@ -94,7 +94,7 @@
 		// 	}
 		// }
 
-        // Local in memory storage on the current instance
+		// Local in memory storage on the current instance
 		{
 			"type" : "StructSimple",
 			"name" : "local_structsimple"

@@ -1,8 +1,8 @@
 {
-    "enable" : false,
+	"enable" : false,
 
-    "DataObjectMap": {
-        "exampleDOM": true
-    }
+	"DataObjectMap": {
+		"exampleDOM": true
+	}
 
 }

@@ -43,10 +43,12 @@ class MainCLI implements Callable<Integer> {
 		// Lead the multi stack
 		MultiStackLoader multiStack = new MultiStackLoader( config.fetchGenericConvertStringMap("dstack") );
 
-		// @TODO load the server
+		// @TODO load the GraphQL server
 
-		// Trigger the preloader
-		multiStack.runMultiThreadedPreloader(6);
+		// Trigger the preloader (if enabled)
+		if( config.fetchBoolean("sys.preloader.enable", true) == true ) {
+			multiStack.runMultiThreadedPreloader( config.fetchInt("sys.preloader.threads", 6) );
+		}
 		
 		// Post server sleep
 		System.out.println("## Post setup cleanup (sleeping)");

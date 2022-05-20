@@ -1,0 +1,9 @@
+{
+	// This is the global enable/disable flag
+	// if this is set as false, all other stack specific preloader.jsonc
+	// is ignored
+	"enable" : true,
+
+	// Number of threads used to allocate to the preloader
+	"threads": 6
+}
