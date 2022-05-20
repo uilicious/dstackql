@@ -39,10 +39,12 @@ FROM alpine_with_jdk AS container_build
 # Copy over the configs
 COPY ./config/sys                         /application/config/sys/
 COPY ./config/dstack.full_example.jsonc   /application/config/
+RUN mkdir /application/config/dstack/
 
 # Copy the full jar
-COPY --from=application_build /application/build/libs/dstackql-*-all.jar /application/
+COPY --from=application_build /application/build/libs/dstackql-*-all.jar /application/dstackql-all.jar
+RUN chmod +x /application/dstackql-all.jar
 
 # Entrypoint & Cmd with the jar
-ENTRYPOINT ["java", "-jar", "./dstackql-*-all.jar"]
+ENTRYPOINT ["java", "-jar", "./dstackql-all.jar"]
 CMD []
