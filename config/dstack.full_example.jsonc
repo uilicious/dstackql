@@ -40,7 +40,7 @@
 		},
 
 		//------------------------------------------------------------------
-		// **StructCache**
+		// **HazelcastCache**
 		//
 		// Remote hazelcast cluster, with data structures configured in caching mode.
 		// This requires the usage of the custom "hazelcast" container with JC addon code.
@@ -67,12 +67,44 @@
 				]
 			}
 		},
-		//--------------------------------------------------------------------------------
+
+		//================================================================================
 		//
-		// SQL Layer examples
+		// ### DB Connectors
 		//
-		//--------------------------------------------------------------------------------
-		
+		// Typically used to perform storage, and query
+		//
+		//================================================================================
+
+		// {
+		// 	"name" : "remote_mongodb",
+		// 	"type" : "mongodb",
+		// 	"mongodb" : {
+		// 		// Mongodb protocol to use, either
+		// 		// - "mongodb"
+		// 		// - "monogodb+srv"
+		// 		"protocol": "mongodb",
+		// 		// User and password settings
+		// 		"user": "db_user",
+		// 		"pass": "db_user",
+		// 		// mongodb host setting
+		// 		"host": "localhost",
+		// 		// mongodb port setting
+		// 		// this is ignored for "monogodb+srv"
+		// 		"port": 27017,
+		// 		// mongodb option string setting, 
+		// 		"opt_str": "r=majority&w=majority&retryWrites=true&maxPoolSize=50"
+		// 	}
+		// },
+
+		//================================================================================
+		//
+		// ### SQL Connectors
+		//
+		// Typically used to perform storage, and query
+		//
+		//================================================================================
+
 		// {
 		//     "name": "project_workspace",
 		//     "type": "filelayered",
