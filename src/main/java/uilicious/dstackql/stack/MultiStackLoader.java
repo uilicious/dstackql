@@ -190,16 +190,16 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 								obj.keySet();
 							}
 							
-							// lets go to the next object
-							obj = dom.looselyIterateObject(obj);
-							
 							// Increment and log it
 							count++;
 							if (count % 100 == 1) {
 								System.out.println("[Preloader-" + structType + "] " + stackName + "."
-									+ structName + " : Preloading (" + count + "/" + dom.size() + ") "
+									+ structName + " : Preloading (" + count + "/" +dom.longSize()+ ") "
 									+ obj._oid());
 							}
+							
+							// lets go to the next object
+							obj = dom.looselyIterateObject(obj);
 							
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -208,7 +208,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					
 					// Finish the output
 					System.out.println("[Preloader-" + structType + "] " + stackName + "." + structName
-						+ " : Finished Preloading (" + dom.size() + ") !!!");
+						+ " : Finished Preloading (" + count + ") !!!");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
