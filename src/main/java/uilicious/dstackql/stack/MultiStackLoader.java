@@ -169,15 +169,20 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					
 					// Get the DataObjectMap
 					DataObjectMap dom = stack.getDataObjectMap(structName);
-					
+
+					// Get the target DOM if relevent
+					DataObjectMap targetDom = (targetStack != null)? targetStack.getDataObjectMap(targetStructName) : null;
+
+					// Trigger any initial table setup for the target if needed
+					if( targetDom != null ) {
+						targetDom.systemSetup();
+					}
+
 					// Lets iterate it 
 					DataObject obj = dom.looselyIterateObject(null);
 					while (obj != null) {
 						try {
-							if (targetStack != null) {
-								// Lets sync it to a target
-								DataObjectMap targetDom = targetStack.getDataObjectMap(targetStructName);
-								
+							if (targetDom != null) {
 								// Get the unchecked data object, to sync data to
 								DataObject targetObject = targetDom.get(obj._oid(), true);
 								targetObject.putAll(obj);
