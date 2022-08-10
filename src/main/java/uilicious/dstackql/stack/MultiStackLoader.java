@@ -360,7 +360,8 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 				}
 			};
 		} else {
-			System.err.println("[WARNING] Unable to support sync for ("+ structType + ") " + stackName + "." + structName);
+			System.err.println("[WARNING] Unable to support sync for (" + structType + ") "
+				+ stackName + "." + structName);
 		}
 		return null;
 	}
