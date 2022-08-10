@@ -110,8 +110,10 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 			// Get the DStack object
 			DStack stackObj = this.get(stackName);
 			
-			// Lets load the various preloader types
+			// Lets load the various preloader types that is supported
 			schedulePreloaderThreads(stackName, stackObj, pool, preloaderConfig, "DataObjectMap");
+			schedulePreloaderThreads(stackName, stackObj, pool, preloaderConfig, "KeyValueMap");
+			schedulePreloaderThreads(stackName, stackObj, pool, preloaderConfig, "FileWorkspaceMap");
 		}
 		
 		// Return the pool after everything is scheduled
