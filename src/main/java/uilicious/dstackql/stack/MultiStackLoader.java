@@ -177,6 +177,9 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					// Get the DataObjectMap
 					DataObjectMap sourceDom = stack.getDataObjectMap(structName);
 					
+					// Ensure systemsetup on all layer of the stack in the source
+					sourceDom.systemSetup();
+					
 					// Get the target DOM if relevent
 					DataObjectMap targetDom = (targetStack != null) ? targetStack
 						.getDataObjectMap(targetStructName) : null;
@@ -235,6 +238,9 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					
 					// Get the DataObjectMap
 					KeyValueMap sourceKVM = stack.getKeyValueMap(structName);
+					
+					// Ensure systemsetup on all layer of the stack in the source
+					sourceKVM.systemSetup();
 					
 					// Get the target DOM if relevent
 					KeyValueMap targetKVM = (targetStack != null) ? targetStack
@@ -302,6 +308,9 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					// Get the DataObjectMap
 					FileWorkspaceMap sourceFWM = stack.getFileWorkspaceMap(structName);
 					
+					// Ensure systemsetup on all layer of the stack in the source
+					sourceFWM.systemSetup();
+
 					// Get the target DOM if relevent
 					FileWorkspaceMap targetFWM = (targetStack != null) ? targetStack
 						.getFileWorkspaceMap(targetStructName) : null;
