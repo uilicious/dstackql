@@ -326,6 +326,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 						try {
 							// Lets get the file workspace
 							FileWorkspace sourceFW = sourceFWM.get(key);
+							sourceFW.setupWorkspace();
 							
 							// Lets get the target file workspace, and set it up if neeeded
 							FileWorkspace targetFW = (targetFWM != null) ? targetFWM.get(key, true) : null;
