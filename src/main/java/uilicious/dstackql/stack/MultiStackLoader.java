@@ -318,8 +318,11 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 							// Lets get the file workspace
 							FileWorkspace sourceFW = sourceFWM.get(key);
 							
-							// Lets get the target file workspace if neeeded
-							FileWorkspace targetFW = (targetFWM != null) ? targetFWM.get(key) : null;
+							// Lets get the target file workspace, and set it up if neeeded
+							FileWorkspace targetFW = (targetFWM != null) ? targetFWM.get(key, true) : null;
+							if( targetFW != null ) {
+								targetFW.setupWorkspace();
+							}
 							
 							// Lets iterate the workspace
 							Set<String> pathList = sourceFW.getFileAndFolderPathSet("");
