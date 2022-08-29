@@ -320,7 +320,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 							
 							// Lets get the target file workspace, and set it up if neeeded
 							FileWorkspace targetFW = (targetFWM != null) ? targetFWM.get(key, true) : null;
-							if( targetFW != null ) {
+							if( targetFWM != null ) {
 								targetFW.setupWorkspace();
 							}
 							
@@ -333,12 +333,12 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 								if (path.endsWith("/")) {
 									// Handle folder sync
 									sourceFW.ensureFolderPath(path);
-									if (targetFW != null) {
+									if (targetFWM != null) {
 										targetFW.ensureFolderPath(path);
 									}
 								} else {
 									// Handle file sync
-									if (targetFW != null) {
+									if (targetFWM != null) {
 										targetFW.writeByteArray(path, sourceFW.readByteArray(path));
 									} else {
 										sourceFW.readByteArray(path);
