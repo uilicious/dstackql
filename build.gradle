@@ -292,17 +292,17 @@ jacoco {
 	toolVersion = "0.8.8"
 }
 
-// jacocoTestReport {
-// 	// Build the report
-// 	reports {
-// 		xml.enabled true
-// 		csv.enabled true
+jacocoTestReport {
+	// Build the report
+	reports {
+		xml.enabled true
+		csv.enabled true
 
-// 		// Report format compatible with codeconv.io
-// 		xml.destination "${buildDir}/reports/jacoco/report.xml"
-// 		csv.destination "${buildDir}/reports/jacoco/report.csv"
-// 	}
-// }
+		// Report format compatible with codeconv.io
+		xml.destination "${buildDir}/reports/jacoco/report.xml"
+		csv.destination "${buildDir}/reports/jacoco/report.csv"
+	}
+}
 
 //----------------------------------------------------------------
 //
