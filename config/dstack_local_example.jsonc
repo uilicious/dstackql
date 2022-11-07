@@ -1,0 +1,66 @@
+{
+
+    //This example shows how to read local files and sync them to a mongodb container (docker run -d -p 27017:27017 --name mongodb mongo:latest)
+
+	// ## Flag to enable / disable the dstack provider
+	"enable": true,
+
+	//
+	// ## Providers
+	//
+	// This represent the various data layers providers used in the system.
+	//
+	// For examples on how to configure the provider, see the `dstack.full_example.jsonc`
+	//
+	"provider" : [
+		// Local in memory storage on the current instance
+		{
+			"type" : "filelayered",
+			"name" : "localFS",
+			"storage": "./exampleDOM/",
+		    "appendNameSpace": false
+		},
+		{
+			"name" : "mongo",
+			"type" : "mongodb",
+			"mongodb" : {
+				// Mongodb protocol to use, either
+				// - "mongodb"
+				// - "monogodb+srv"
+				"protocol": "mongodb",
+				// User and password settings
+				// "user": "admin",
+				// "pass": "admin",
+				// mongodb database name and host setting
+				"name": "example",
+				"host": "localhost",
+				// mongodb port setting
+				// this is ignored for "monogodb+srv"
+				"port": 27017,
+				// mongodb option string setting, 
+				// "opt_str": "r=majority&w=majority&retryWrites=true&maxPoolSize=50"
+			}
+		},
+	],
+
+	//
+	// ## Namespace
+	//
+	// Declaration of namespace relation to the providers
+	//
+	// Normally a caching layer will be placed first, followed by
+	// the actual implmentation layer.
+	//
+	// The last layer will normally be the "single source of truth",
+	// for handling data accuracy resolution, and queries. (Normally JSql)
+	//
+	"namespace" : [
+		{
+			"regex" : "EXAMPLEDOM",
+			"providers" : [
+				"mongo",
+				"localFS"
+			]
+		}
+	]
+}

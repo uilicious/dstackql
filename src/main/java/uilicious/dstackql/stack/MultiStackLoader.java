@@ -310,7 +310,7 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 					
 					// Ensure systemsetup on all layer of the stack in the source
 					sourceFWM.systemSetup();
-
+					
 					// Get the target DOM if relevent
 					FileWorkspaceMap targetFWM = (targetStack != null) ? targetStack
 						.getFileWorkspaceMap(targetStructName) : null;
@@ -330,12 +330,12 @@ public class MultiStackLoader extends GenericConvertHashMap<String, DStack> {
 							
 							// Lets get the target file workspace, and set it up if neeeded
 							FileWorkspace targetFW = (targetFWM != null) ? targetFWM.get(key, true) : null;
-							if( targetFWM != null ) {
+							if (targetFWM != null) {
 								targetFW.setupWorkspace();
 							}
 							
 							// Lets iterate the workspace
-							Set<String> pathList = sourceFW.getFileAndFolderPathSet("");
+							Set<String> pathList = sourceFW.getFileAndFolderPathSet("",-1,-1);
 							
 							// Lets loop through the path list
 							for (String path : pathList) {
